@@ -70,6 +70,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'projectsite.wsgi.application'
 
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/polls/'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
