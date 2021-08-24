@@ -1,10 +1,12 @@
 
 GET http://localhost:8000/login/ HTTP/1.1
 
+# need to make a get-request before post for the csrftoken
+
 ###
 
 POST http://localhost:8000/polls/1/vote/ HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
-X-CSRFToken: Da0CpT3nujsfo7ie2Q3LAzOmDFi5hjDS9z1LPhCWn4pTECwW5FfYwhFagIfHPPCN
+X-CSRFToken: received-csrf-token-here
 
 choice=1
