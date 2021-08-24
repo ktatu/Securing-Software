@@ -1,0 +1,3 @@
+GET http://localhost:8000/login/ HTTP/1.1
+
+# need to make a get-request first to receive the csrftoken

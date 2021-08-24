@@ -1,0 +1,11 @@
+<html>
+    <body>
+        <h2>New poll</h2>
+        <form method="post" action="new">
+            {% csrf_token %}
+            <input type="text" name="test">
+            <input type="submit" value="New poll">
+            <textarea></textarea>
+        </form>
+    </body>
+</html>
