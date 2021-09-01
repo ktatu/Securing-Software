@@ -10,8 +10,8 @@ class Question(models.Model):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
     
     title = models.CharField(max_length=20)
-    description = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
+    description = models.TextField(max_length=200)
+    pub_date = models.DateTimeField('date published', default=timezone.now())
 
 
 class Choice(models.Model):

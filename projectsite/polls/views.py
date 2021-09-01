@@ -4,6 +4,9 @@ from .models import Question, Choice
 from django.template import loader
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from bs4 import BeautifulSoup
+
+import sqlite3
 
 @login_required
 def index(request):
@@ -21,12 +24,12 @@ def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/results.html', {'question': question})
 
+#@login_required
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
         return render(request, 'polls/detail.html', {
             'question': question,
             'error_message': "You didn't select a choice.",
@@ -34,21 +37,46 @@ def vote(request, question_id):
     else:
         selected_choice.votes += 1
         selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
+
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
     
+@login_required
 def new_poll(request):
     if request.method == "GET":
         return render(request, 'polls/new.html')
     
-        # talletettavat model-objektit tulee post-pyynnössä new.html-templatesta.
-        # textareaa ei sanitoida -> voi injektoida javascriptiä description-kenttään
-        # injektion aiheuttama scriptin suoritus tapahtuu detail-sivulla, indexissä ei descriptioneja
-        # uudessa question-modelissa voi olla ongelmia
-    return None
-
-def submit_poll(request):
-    print(request.POST.get('test'))
+    description = request.POST.get("description")
+    
+    poll = Question.objects.create(title=request.POST.get("title"), description=description)
+    
+    #if has_risky_html(description):
+        #return redirect('/polls')
+    
+    choice_1 = Choice.objects.create(question=poll, choice_text=request.POST.get("choice1"))
+    choice_2 = Choice.objects.create(question=poll, choice_text=request.POST.get("choice2"))
+    choice_3 = Choice.objects.create(question=poll, choice_text=request.POST.get("choice3"))
+    
+    poll.save()
+    choice_1.save()
+    choice_2.save()
+    choice_3.save()
+    
     return redirect('/polls')
+
+def has_risky_html(text):
+    safe_tags = ["strong", "h1", "h2", "h3", "ul", "li", "br", "p"]
+    
+    soup = BeautifulSoup(text)
+    for tag in soup.findAll(True):
+        if tag.name not in safe_tags:
+            return True
+        
+    return False
+
+def search(request):
+    searched_title = request.GET.get("title")
+    
+    conn = sqlite3.connect("db.sqlite3")
+    cursor = conn.cursor()
+    
+    res = ("SELECT * FROM polls_tasks WHERE title = ")
