@@ -75,8 +75,21 @@ def has_risky_html(text):
 
 def search(request):
     searched_title = request.GET.get("title")
-    
-    conn = sqlite3.connect("db.sqlite3")
+    conn = sqlite3.connect("./db.sqlite3")
     cursor = conn.cursor()
     
-    res = ("SELECT * FROM polls_tasks WHERE title = ")
+    #example of injection into search:
+    #doesntexistafwtwa24234' UNION SELECT id, email, first_name, last_name FROM auth_user WHERE username LIKE 'a' OR 'x' = 'x
+    res = cursor.execute("SELECT * FROM polls_question WHERE title = '%s'" % (searched_title)).fetchone()
+    
+    cursor.close()
+    conn.close()
+    
+    title = res[1]
+    description = res[2]
+    
+    poll = {'title': title, 'description': description}
+    
+    if res is None:
+        return redirect('/polls')
+    return render(request, 'polls/detail.html', {'question': poll})

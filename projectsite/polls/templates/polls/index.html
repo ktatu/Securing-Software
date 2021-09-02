@@ -1,3 +1,11 @@
+<h2>Poll search</h2>
+<form method="GET" action="search">
+    <label for="search_title">Title:</label>
+    <input id="search_title" type="text" name="title">
+    <br>
+    <input type="submit" value="Search">
+</form>
+
 {% if latest_question_list %}
     <ul>
     {% for question in latest_question_list %}
