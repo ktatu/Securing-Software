@@ -5,11 +5,19 @@ from django.template import loader
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from bs4 import BeautifulSoup
+from django.utils import timezone
 
 import sqlite3
+import logging
 
 @login_required
 def index(request):
+    logger = logging.getLogger("django.request")
+    
+    logger.info(request.user.username + " " + request.path + " " + request.method + " " + str(timezone.now()))
+    
+    print("------ " + request.user.username)
+    
     latest_question_list = Question.objects.order_by('-pub_date')[:5]
     context = {'latest_question_list': latest_question_list}
     return render(request, 'polls/index.html', context)
